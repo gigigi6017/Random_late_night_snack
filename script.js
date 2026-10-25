@@ -68,7 +68,6 @@ const menus = [
     "🐙 타코야키",
     "🍳 오코노미야키",
     "🍕 피자빵",
-    "🥐 크루아상",
     "🍞 토스트",
     "🧇 와플",
     "🍩 도넛",
@@ -292,6 +291,8 @@ soundToggle.addEventListener("click", function () {
 // ========================================
 
 let isSpinning = false;
+let spinTimer = null;
+let finishSpinFunction = null;
 
 
 // ========================================
@@ -299,7 +300,14 @@ let isSpinning = false;
 // ========================================
 
 recommendButton.addEventListener("click", function () {
+    // 추첨 중이면 즉시 스킵
     if (isSpinning) {
+        clearTimeout(spinTimer);
+
+        if (finishSpinFunction) {
+            finishSpinFunction();
+        }
+
         return;
     }
 
@@ -310,8 +318,8 @@ recommendButton.addEventListener("click", function () {
         initializeAudio();
     }
 
-    recommendButton.disabled = true;
-    recommendButton.textContent = "🎰 메뉴 추첨 중...";
+    recommendButton.disabled = false;
+    recommendButton.textContent = "⏩ 스킵하기";
 
     menuElement.classList.remove("result");
     menuElement.classList.add("spinning");
@@ -323,8 +331,51 @@ recommendButton.addEventListener("click", function () {
     let elapsed = 0;
     let interval = 50;
 
+    // 실제 당첨 메뉴를 미리 결정
+    const selectedMenu =
+        menus[Math.floor(Math.random() * menus.length)];
+
+    // ========================================
+    // 13. 최종 메뉴 결정
+    // ========================================
+
+    function finishSpin() {
+        if (!isSpinning) {
+            return;
+        }
+
+        clearTimeout(spinTimer);
+
+        menuElement.textContent =
+            `🎉 오늘의 야식은...\n${selectedMenu}!`;
+
+        menuElement.classList.remove("spinning");
+
+        // 결과 애니메이션 다시 실행
+        void menuElement.offsetWidth;
+
+        menuElement.classList.add("result");
+
+        // 결과 발표 소리와 폭죽
+        playFanfare();
+        launchConfetti();
+
+        recommendButton.disabled = false;
+        recommendButton.textContent = "다시 추천받기 🎲";
+
+        isSpinning = false;
+        spinTimer = null;
+        finishSpinFunction = null;
+    }
+
+    finishSpinFunction = finishSpin;
+
     // 슬롯머신 회전
     function spin() {
+        if (!isSpinning) {
+            return;
+        }
+
         const randomIndex = Math.floor(
             Math.random() * menus.length
         );
@@ -350,42 +401,10 @@ recommendButton.addEventListener("click", function () {
                 playSlowdownSound();
             }
 
-            setTimeout(spin, interval);
+            spinTimer = setTimeout(spin, interval);
         } else {
             finishSpin();
         }
-    }
-
-
-    // ========================================
-    // 13. 최종 메뉴 결정
-    // ========================================
-
-    function finishSpin() {
-        const randomIndex = Math.floor(
-            Math.random() * menus.length
-        );
-
-        const selectedMenu = menus[randomIndex];
-
-        menuElement.textContent =
-            `🎉 오늘의 야식은...\n${selectedMenu}!`;
-
-        menuElement.classList.remove("spinning");
-
-        // 결과 애니메이션 다시 실행
-        void menuElement.offsetWidth;
-
-        menuElement.classList.add("result");
-
-        // 결과 발표 소리와 폭죽
-        playFanfare();
-        launchConfetti();
-
-        recommendButton.disabled = false;
-        recommendButton.textContent = "다시 추천받기 🎲";
-
-        isSpinning = false;
     }
 
     spin();
