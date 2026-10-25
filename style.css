@@ -1,10 +1,135 @@
-/* 슬롯머신 효과: 메뉴가 바뀔 때 살짝 확대 */
+
+/* 전체 페이지 */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    padding: 90px 20px 40px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-family: Arial, "Malgun Gothic", sans-serif;
+    color: #f5efff;
+
+    background:
+        radial-gradient(ellipse at 20% 20%, rgba(93, 77, 170, 0.25), transparent 45%),
+        radial-gradient(ellipse at 80% 75%, rgba(60, 75, 150, 0.2), transparent 45%),
+        linear-gradient(160deg, #080d20, #11152f 55%, #17132e);
+
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* 밤하늘 별 장식 */
+body::before {
+    content: "☾   ✦   ⋆   ✧   ⋆   ✦   ☾   ✧";
+    position: absolute;
+    top: 25px;
+    left: 0;
+    width: 100%;
+
+    color: #c9c5ff;
+    font-size: 21px;
+    letter-spacing: 8px;
+    text-align: center;
+
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+/* 가운데 콘텐츠 */
+.container {
+    width: 100%;
+    max-width: 520px;
+    padding: 38px 25px;
+
+    text-align: center;
+
+    background: rgba(25, 29, 59, 0.88);
+    border: 1px solid rgba(160, 150, 230, 0.25);
+    border-radius: 25px;
+
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(8px);
+}
+
+/* 제목 */
+h1 {
+    margin: 0 0 16px;
+    color: #f5efff;
+    font-size: clamp(27px, 6vw, 36px);
+    line-height: 1.4;
+}
+
+/* 설명 */
+.container p {
+    margin: 0 0 30px;
+    color: #c4c5df;
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+/* 야식 메뉴 카드 */
+#menu {
+    margin: 25px 0;
+    padding: 28px 12px;
+
+    min-height: 110px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: #11162f;
+    border: 1px solid #45466d;
+    border-radius: 18px;
+
+    color: #ffe2a8;
+    font-size: clamp(20px, 5vw, 27px);
+    font-weight: bold;
+    line-height: 1.6;
+
+    overflow-wrap: anywhere;
+}
+
+/* 추천 버튼 */
+#recommendButton {
+    width: 100%;
+    padding: 16px 20px;
+
+    border: none;
+    border-radius: 30px;
+
+    background: linear-gradient(135deg, #9184f0, #7164ce);
+    color: white;
+
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+
+    box-shadow: 0 5px 18px rgba(129, 118, 219, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#recommendButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(129, 118, 219, 0.4);
+}
+
+#recommendButton:active {
+    transform: scale(0.97);
+}
+
+/* 슬롯머신 효과 */
 #menu.spinning {
     animation: slotSpin 0.15s ease-in-out infinite alternate;
     color: #ffbd59;
 }
 
-/* 슬롯머신 애니메이션 */
 @keyframes slotSpin {
     from {
         transform: scale(0.97);
@@ -21,7 +146,7 @@
 #menu.result {
     animation: resultPop 0.6s ease-out;
     color: #ffd166;
-    text-shadow: 0 0 18px rgba(255, 209, 102, 0.8);
+    text-shadow: 0 0 18px rgba(255, 209, 102, 0.35);
 }
 
 @keyframes resultPop {
@@ -41,7 +166,7 @@
     }
 }
 
-/* 폭죽 색종이가 표시되는 전체 화면 */
+/* 폭죽 색종이 전체 화면 */
 #confetti-container {
     position: fixed;
     inset: 0;
@@ -72,18 +197,6 @@
     }
 }
 
-/* 움직임 줄이기 설정을 사용하는 사람 배려 */
-@media (prefers-reduced-motion: reduce) {
-    #menu.spinning,
-    #menu.result {
-        animation: none;
-    }
-
-    .confetti {
-        animation-duration: 0.5s !important;
-    }
-}
-
 /* 오른쪽 위 소리 켜기/끄기 버튼 */
 .sound-toggle {
     position: fixed;
@@ -94,11 +207,12 @@
     width: 48px;
     height: 48px;
 
-    border: none;
+    border: 1px solid rgba(201, 197, 255, 0.3);
     border-radius: 50%;
 
-    background-color: white;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    background: #191d3b;
+    color: white;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.25);
 
     font-size: 24px;
     cursor: pointer;
@@ -116,4 +230,39 @@
 
 .sound-toggle:active {
     transform: scale(0.95);
+}
+
+/* 움직임 줄이기 설정을 사용하는 사람 배려 */
+@media (prefers-reduced-motion: reduce) {
+    #menu.spinning,
+    #menu.result {
+        animation: none;
+    }
+
+    .confetti {
+        animation-duration: 0.5s !important;
+    }
+
+    #recommendButton,
+    .sound-toggle {
+        transition: none;
+    }
+}
+
+/* 휴대폰 화면 */
+@media (max-width: 480px) {
+    body {
+        padding: 90px 14px 30px;
+    }
+
+    .container {
+        padding: 30px 18px;
+    }
+
+    .sound-toggle {
+        top: 15px;
+        right: 15px;
+        width: 44px;
+        height: 44px;
+    }
 }
