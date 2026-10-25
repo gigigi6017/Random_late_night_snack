@@ -1,106 +1,85 @@
-/* 페이지 기본 설정 */
-* {
-    box-sizing: border-box;
+/* 슬롯머신 효과: 메뉴가 바뀔 때 살짝 확대 */
+#menu.spinning {
+    animation: slotSpin 0.15s ease-in-out infinite alternate;
+    color: #ffbd59;
 }
 
-body {
-    margin: 0;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    font-family: Arial, "Malgun Gothic", sans-serif;
-    background: linear-gradient(135deg, #141e30, #243b55);
-    color: white;
-}
-
-/* 메인 콘텐츠 */
-.container {
-    width: 90%;
-    max-width: 500px;
-    padding: 40px 25px;
-
-    text-align: center;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 24px;
-
-    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.3);
-}
-
-/* 사이트 제목 */
-h1 {
-    margin-top: 0;
-    font-size: 30px;
-}
-
-/* 안내 문구 */
-p {
-    color: #d1d5db;
-    font-size: 16px;
-    line-height: 1.6;
-}
-
-/* 추천 메뉴 표시 영역 */
-#menu {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    min-height: 120px;
-    margin: 30px 0;
-    padding: 20px;
-
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
-
-    font-size: 20px;
-    font-weight: bold;
-    line-height: 1.6;
-    overflow-wrap: anywhere;
-}
-
-/* 추천 버튼 */
-button {
-    width: 100%;
-    padding: 16px;
-
-    border: none;
-    border-radius: 12px;
-
-    background: #ff9f43;
-    color: #222;
-
-    font-size: 18px;
-    font-weight: bold;
-
-    cursor: pointer;
-    transition: background 0.2s, transform 0.2s;
-}
-
-/* 마우스를 버튼에 올렸을 때 */
-button:hover {
-    background: #ffb866;
-    transform: translateY(-2px);
-}
-
-/* 버튼을 클릭했을 때 */
-button:active {
-    transform: translateY(0);
-}
-
-/* 작은 화면 대응 */
-@media (max-width: 400px) {
-    .container {
-        padding: 30px 18px;
+/* 슬롯머신 애니메이션 */
+@keyframes slotSpin {
+    from {
+        transform: scale(0.97);
+        opacity: 0.7;
     }
 
-    h1 {
-        font-size: 25px;
+    to {
+        transform: scale(1.04);
+        opacity: 1;
+    }
+}
+
+/* 최종 메뉴 등장 효과 */
+#menu.result {
+    animation: resultPop 0.6s ease-out;
+    color: #ffd166;
+    text-shadow: 0 0 18px rgba(255, 209, 102, 0.8);
+}
+
+@keyframes resultPop {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
     }
 
-    #menu {
-        font-size: 18px;
+    65% {
+        transform: scale(1.12);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* 폭죽 색종이가 표시되는 전체 화면 */
+#confetti-container {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+/* 색종이 하나 */
+.confetti {
+    position: absolute;
+    top: -20px;
+    width: 10px;
+    height: 16px;
+    border-radius: 2px;
+    animation: confettiFall var(--duration) ease-out forwards;
+}
+
+@keyframes confettiFall {
+    0% {
+        transform: translate3d(0, 0, 0) rotate(0deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate3d(var(--drift), 105vh, 0) rotate(900deg);
+        opacity: 0;
+    }
+}
+
+/* 움직임 줄이기 설정을 사용하는 사람 배려 */
+@media (prefers-reduced-motion: reduce) {
+    #menu.spinning,
+    #menu.result {
+        animation: none;
+    }
+
+    .confetti {
+        animation-duration: 0.5s !important;
     }
 }

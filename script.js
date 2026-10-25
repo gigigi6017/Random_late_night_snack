@@ -100,19 +100,135 @@ const menus = [
     "🍲 어묵탕"
 ];
 
-// HTML에서 메뉴 표시 영역과 버튼 가져오기
+// HTML 요소 가져오기
 const menuElement = document.getElementById("menu");
 const recommendButton = document.getElementById("recommendButton");
 
-// 버튼을 클릭하면 실행
+// 폭죽을 표시할 영역 만들기
+const confettiContainer = document.createElement("div");
+confettiContainer.id = "confetti-container";
+confettiContainer.setAttribute("aria-hidden", "true");
+document.body.appendChild(confettiContainer);
+
+// 슬롯머신 작동 상태
+let isSpinning = false;
+
+// 추천 버튼 클릭
 recommendButton.addEventListener("click", function () {
+    // 이미 슬롯머신이 돌아가고 있다면 중복 실행 방지
+    if (isSpinning) {
+        return;
+    }
 
-    // 메뉴 목록에서 무작위 번호 선택
-    const randomIndex = Math.floor(Math.random() * menus.length);
+    isSpinning = true;
+    recommendButton.disabled = true;
+    recommendButton.textContent = "🎰 메뉴 추첨 중...";
 
-    // 선택한 메뉴 가져오기
-    const selectedMenu = menus[randomIndex];
+    // 이전 결과의 효과 제거
+    menuElement.classList.remove("result");
+    menuElement.classList.add("spinning");
 
-    // 화면에 추천 메뉴 표시
-    menuElement.textContent = "오늘의 야식은...\n" + selectedMenu + "!";
+    // 이전 폭죽 제거
+    confettiContainer.replaceChildren();
+
+    let elapsed = 0;
+    let interval = 50;
+
+    // 처음에는 빠르게 메뉴 변경
+    function spin() {
+        const randomIndex = Math.floor(Math.random() * menus.length);
+
+        menuElement.textContent = menus[randomIndex];
+
+        elapsed += interval;
+
+        // 약 2.5초 동안 돌리고 점점 느려지게 만들기
+        if (elapsed < 2500) {
+            if (elapsed > 1800) {
+                interval = 250;
+            } else if (elapsed > 1200) {
+                interval = 150;
+            } else if (elapsed > 600) {
+                interval = 90;
+            } else {
+                interval = 50;
+            }
+
+            setTimeout(spin, interval);
+        } else {
+            finishSpin();
+        }
+    }
+
+    // 최종 메뉴 결정
+    function finishSpin() {
+        const randomIndex = Math.floor(Math.random() * menus.length);
+        const selectedMenu = menus[randomIndex];
+
+        menuElement.textContent = `🎉 오늘의 야식은...\n${selectedMenu}!`;
+
+        menuElement.classList.remove("spinning");
+
+        // 애니메이션을 다시 실행하기 위한 처리
+        void menuElement.offsetWidth;
+
+        menuElement.classList.add("result");
+
+        // 폭죽 효과 실행
+        launchConfetti();
+
+        recommendButton.disabled = false;
+        recommendButton.textContent = "다시 추천받기 🎲";
+
+        isSpinning = false;
+    }
+    
+    spin();
 });
+
+// 폭죽 효과
+function launchConfetti() {
+    const colors = [
+        "#ff595e",
+        "#ffca3a",
+        "#8ac926",
+        "#1982c4",
+        "#6a4c93",
+        "#ff99c8"
+    ];
+
+    // 화면에 색종이 100개 생성
+    for (let i = 0; i < 100; i++) {
+        const confetti = document.createElement("span");
+
+        confetti.className = "confetti";
+
+        // 화면의 가로 위치를 무작위로 지정
+        confetti.style.left = Math.random() * 100 + "vw";
+
+        // 색상 무작위 선택
+        confetti.style.backgroundColor =
+            colors[Math.floor(Math.random() * colors.length)];
+
+        // 색종이 크기와 떨어지는 시간 설정
+        confetti.style.width = 5 + Math.random() * 7 + "px";
+        confetti.style.height = 8 + Math.random() * 12 + "px";
+
+        confetti.style.setProperty(
+            "--duration",
+            2 + Math.random() * 2 + "s"
+        );
+
+        confetti.style.setProperty(
+            "--drift",
+            Math.random() * 300 - 150 + "px"
+        );
+
+        confettiContainer.appendChild(confetti);
+
+        // 애니메이션이 끝나면 해당 색종이 삭제
+        confetti.addEventListener("animationend", function () {
+            confetti.remove();
+        });
+    }
+}
